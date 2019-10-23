@@ -7,12 +7,20 @@
 	<h2>Registration</h2>
 	<form action = "save_user.php" method = "post">
 <p>
+    <label>Your E-mail:<br></label>
+    <input name="email"    type="text" size="15" maxlength="100">
+    </p>
+<p>
 	<label>Your Login<br></label>
 	<input name = "login" type = "text" size = "15" maxlength  = "15">
 	</p>
 <p>
 	<label>Your password<br></label>
 	<input name = "password" type = "password" size = "15" maxlength  = "15">
+	</p>
+<p>
+	<label>Repeat your password<br></label>
+	<input name = "rpassword" type = "password" size = "15" maxlength  = "15">
 	</p>
 <p>
 	<input type = "submit" name = "submit" value = "Registration">

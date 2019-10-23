@@ -11,8 +11,18 @@
 			unset($password);
 		} 
 	}
-	if (empty($login) or empty ($password)){
+	if  (isset($_POST['email'])) { 
+		$email = $_POST['email']; 
+			if ($email == '') {    
+				unset($email);
+		} 
+	}
+	if  (empty($login) or empty($password) or empty($email)){ //or empty($code)
 		exit ("You enter not full information turn back and fill all field!");
+			if    (!preg_match("/[0-9a-z_]+@[0-9a-z_^\.]+\.[a-z]{2,3}/i", $email)){
+				//проверка е-mail адреса регулярными выражениями на корректность
+			exit    ("Invalid e-mail!");
+        	}
 	}
 	//если логин и пароль введены, то обрабатываем их, чтобы теги и скрипты не работали
     $login = stripslashes($login);
@@ -41,11 +51,20 @@
     exit ("Sorry your login is already create");
     }
 	// если такого нет, то сохраняем данные
-	$result2 = mysqli_query ($db,"INSERT INTO users (login,password) VALUES('$login','$password')");
+	$result2 = mysqli_query ($db,"INSERT INTO users (login,password,email,date) VALUES('$login','$password','$email',NOW())");
 	// Проверяем, есть ли ошибки
     if ($result2=='TRUE') {
-    	echo "You successfully registration <a href='index.php'>Main page</a>";
-    }
+        $result3 = mysqli_query ($db,"SELECT id FROM users WHERE login='$login'");
+        //извлекаем    идентификатор пользователя. Благодаря ему у нас и будет уникальный код    активации, ведь двух одинаковых идентификаторов быть не может.
+        $myrow3 = mysqli_fetch_array($result3);
+        $activation  = md5($myrow3['id']).md5($login);//код активации аккаунта. Зашифруем    через функцию md5 идентификатор и логин. Такое сочетание пользователь вряд ли    сможет подобрать вручную через адресную строку.
+ 		$subject = "Confirmation of registration";//тема сообщения
+        $message = "Hello! Thank you for registering at citename.ru\nYour username:	".$login."\n Follow the link to activate your account:\n http://localhost/LinguaRegistration/activation.php?login=".$login."&code=".$activation."\nRespectfully,\n
+            Administration citename.ru";//содержание сообщение
+            mail($email,    $subject, $message, "Content-type:text/plane;    Charset=windows-1251\r\n");//отправляем сообщение
+                     
+            echo "An e-mail has been sent to you with a link to confirm registration. Attention! Link valid for 1 hour <a href='index.phtml'>Главная    страница</a>"; //говорим о    отправленном письме пользователю
+            }
  	else {
     	echo "ERROR! You are dont registration";
     }

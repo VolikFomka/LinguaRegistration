@@ -1,5 +1,5 @@
 <?php
-    session_start();
+session_start();
 if (isset($_POST['login'])) { $login = $_POST['login']; if ($login == '') { unset($login);} } 
     if (isset($_POST['password'])) { $password=$_POST['password']; if ($password =='') { unset($password);} }
     
@@ -9,7 +9,7 @@ if (empty($login) or empty($password))
     }
     $login = stripslashes($login);
     $login = htmlspecialchars($login);
-$password = stripslashes($password);
+    $password = stripslashes($password);
     $password = htmlspecialchars($password);
 //удаляем лишние пробелы
     $login = trim($login);
@@ -17,7 +17,7 @@ $password = stripslashes($password);
 // подключаемся к базе
     include ("bd.php");
  
-$result = mysqli_query($db,"SELECT * FROM users WHERE login='$login'"); //извлекаем из базы все данные о пользователе с введенным логином
+$result = mysqli_query($db,"SELECT * FROM users WHERE login='$login' AND password='$password'    AND activation='1'"); //извлекаем из базы все данные о пользователе с введенным логином
     $myrow = mysqli_fetch_array($result);
     if (empty($myrow['password'])) {
     //если пользователя с введенным логином не существует
@@ -29,7 +29,7 @@ $result = mysqli_query($db,"SELECT * FROM users WHERE login='$login'"); //изв
     //если пароли совпадают, то запускаем пользователю сессию
     $_SESSION['login']=$myrow['login']; 
     $_SESSION['id']=$myrow['id'];
-    echo "You enjoy in site <a href='index.php'>Главная страница</a>";
+    echo "You enjoy in site <a href='index.phtml'>Главная страница</a>";
     }
  else {
     //если пароли не сошлись
